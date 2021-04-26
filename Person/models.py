@@ -1,3 +1,45 @@
 from django.db import models
-
+import uuid
+from django.utils import timezone
 # Create your models here.
+
+class Person(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    first_name = models.CharField(max_length=250)
+    last_name = models.CharField(max_length=250)
+    date_of_birth = models.DateField()
+    religion = models.CharField(max_length=250)
+    email = models.EmailField(max_length=250)
+    address = models.CharField(max_length=250)
+    phone = models.IntegerField()
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('FM', 'Female'),
+    )
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
+
+    class Meta:
+        db_table = "person"
+
+    def __str__(self):
+        return self.last_name+ ' ' + self.first_name
+
+# Thành tựu
+class Achievement(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    achievement_name = models.CharField(max_length=250)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'achievement'
+# Hồ sơ sức khỏe
+class Health(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    height = models.SmallIntegerField()
+    weight = models.SmallIntegerField()
+    eye_sight = models.SmallIntegerField()
+    health_status = models.TextField(null=True)
+    disease = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'health'

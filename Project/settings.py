@@ -26,10 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
+    'Account',
     'Student',
     'Teacher',
     'Person',
     'School',
+    'Device',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +84,7 @@ DATABASES = {
     }
 }
 
-
+AUTH_USER_MODEL = 'Account.Account'
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
