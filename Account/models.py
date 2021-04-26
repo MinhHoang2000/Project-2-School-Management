@@ -37,7 +37,6 @@ class Account(AbstractBaseUser):
     permissions = models.ManyToManyField(Permission)
 
     USERNAME_FIELD = 'username'
-    PASSWORD_FIELD = 'password'
     REQUIRED_FIELDS = []
 
     objects = AccountManager()
@@ -52,7 +51,7 @@ class Account(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        return self.is_admin
+        return self.is_staff
 
     @property
     def is_superuser(self):
