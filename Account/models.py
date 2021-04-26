@@ -12,8 +12,8 @@ from django.contrib.auth.models import _user_has_perm
 
 class Permission(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    permission_name = models.CharField(max_length=128)
-    permission_code = models.CharField(max_length=4)
+    permission_name = models.CharField(max_length=250)
+    permission_code = models.CharField(max_length=128)
 
     class Meta:
         db_table = "permission"
