@@ -6,7 +6,7 @@ import  uuid
 
 # Thông tin học sinh
 class Student(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     personal = models.OneToOneField(Person, on_delete=models.CASCADE)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     achievement = models.ManyToManyField(Achievement)

@@ -11,7 +11,7 @@ from django.contrib.auth.models import _user_has_perm
 # Create your models here.
 
 class Permission(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     permission_name = models.CharField(max_length=250)
     permission_code = models.CharField(max_length=128)
 
@@ -20,7 +20,7 @@ class Permission(models.Model):
 
 
 class Account(AbstractBaseUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     username = models.CharField(max_length=128,
                                 unique=True,
                                 validators=[UnicodeUsernameValidator()],

@@ -4,7 +4,7 @@ from django.utils import timezone
 # Create your models here.
 
 class Person(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
     date_of_birth = models.DateField()
@@ -26,7 +26,7 @@ class Person(models.Model):
 
 # Thành tựu
 class Achievement(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    id = models.CharField(max_length=100,default=uuid.uuid4, primary_key=True)
     achievement_name = models.CharField(max_length=250)
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -34,7 +34,7 @@ class Achievement(models.Model):
         db_table = 'achievement'
 # Hồ sơ sức khỏe
 class Health(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid5, editable=False, unique=True)
+    id = models.CharField(max_length=100, default=uuid.uuid4, primary_key=True)
     height = models.SmallIntegerField()
     weight = models.SmallIntegerField()
     eye_sight = models.SmallIntegerField()
