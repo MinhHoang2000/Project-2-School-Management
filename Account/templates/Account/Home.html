@@ -9,9 +9,13 @@
 <body>
     {% if user.is_authenticated %}
       <h1>Your home</h1>
+      <br/>
+      <a href="/account/change_password">Change password</a>
+      <br/>
       <a href="/account/logout">Logout</a>
     {% else %}
       <h1>You need login</h1>
+      <br/>
       <a href="/account/login">Login</a>
     {% endif %}
 </body>
