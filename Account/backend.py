@@ -1,6 +1,9 @@
 from django.contrib.auth.backends import BaseBackend
 from django.http.response import JsonResponse
 from .models import Account
+from rest_framework import authentication, exceptions
+from django.conf import settings
+import jwt
 
 class CustomBackend(BaseBackend):
     def authenticate(self, request, **kwargs):
@@ -32,3 +35,19 @@ class CustomBackend(BaseBackend):
         perms = ["{code}" for id, name, code in perms]
 
         return perms
+class JWTAuthentication(authentication.TokenAuthentication):
+    def jwtauthenticate(self, request):
+        auth_data = authentication.get_authorization_header(request)
+        if not auth_data:
+            return None
+        prefix, token = auth_data.decode('utf-8').split(' ')
+        try:
+            payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms="HS256")
+            user = Account.objects.get(username=payload['username'])
+            return (user, token)
+
+        except jwt.DecodeError as identifier:
+            return False
+        except jwt.ExpiredSignatureError as identifier:
+            return False
+       

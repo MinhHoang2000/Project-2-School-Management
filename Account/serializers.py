@@ -15,3 +15,4 @@ class AccountSerializer(serializers.ModelSerializer):
 class UserLogin(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+    is_active = serializers.BooleanField()

@@ -147,3 +147,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'Public'
 MEDIA_URl = '/public'
+LOGIN_REDIRECT_URL = '/account'
