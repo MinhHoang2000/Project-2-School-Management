@@ -26,7 +26,7 @@ class Account(AbstractBaseUser):
                                 validators=[UnicodeUsernameValidator()],
                                 error_messages={'unique': 'Username already exists'},
                                 )
-    password = models.CharField(max_length=320)
+    password = models.CharField(max_length=500)
     email = models.CharField('Email of Account',
                              max_length=128,
                              validators=[EmailValidator()]

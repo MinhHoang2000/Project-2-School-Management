@@ -1,11 +1,11 @@
-from django.db.models import fields
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.fields import SerializerMethodField
 from .models import Account
-from rest_framework import serializers
 from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import Token
+from django.utils.text import gettext_lazy as _
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 user = get_user_model()
 class AccountSerializer(serializers.ModelSerializer):
@@ -32,20 +32,50 @@ class AccountSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Your password is not strong enough')
         return value
 
-class TokenSerializer(serializers.ModelSerializer):
-    token = serializers.SerializerMethodField()
+# class TokenSerializer(serializers.ModelSerializer):
+#     token = serializers.SerializerMethodField()
 
-    class Meta:
-        model = user
-        fields = ['id', 'username', 'is_admin', 'token']
+#     class Meta:
+#         model = user
+#         fields = ['id', 'username', 'is_admin', 'token']
 
-    def get_token(self, obj):
-        if Token.objects.filter(user=obj):
-            return Token.objects.get(user=obj).key
-        return Token.objects.create(user=obj).key
+#     def get_token(self, obj):
+#         if Token.objects.filter(user=obj):
+#             return Token.objects.get(user=obj).key
+#         return Token.objects.create(user=obj).key
 
 # class BearerToken(TokenAuthentication):
 #     keyword = "Bearer"
+
+# subclass if you want to use ObtainPairViews in urls.py
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+
+#         # Add custom claims
+#         token['username'] = user.username
+#         token['id']=user.id
+#         token['is_admin']=user.is_admin
+#         return token
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    default_error_messages = {
+        'bad_token': _('Token is invalid or expired')
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            RefreshToken(self.token).blacklist()
+        except TokenError:
+            self.fail('bad_token')
 
 class UserLogin(serializers.Serializer):
     username = serializers.CharField()
