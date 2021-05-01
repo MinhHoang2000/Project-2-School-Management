@@ -5,8 +5,7 @@ from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('admin/', include('Admin.urls')),
     path('account/', include('Account.urls')),
-    path('api-token-auth/', views.obtain_auth_token),
-    path('', include('django.contrib.auth.urls')),
 ]
