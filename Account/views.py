@@ -19,7 +19,7 @@ from rest_framework.generics import GenericAPIView
 
 # from .forms import ChangePasswordForm, LoginForm
 from .serializers import AccountSerializer, UserLogin, UserChangePassword, RefreshTokenSerializer
-from .backend import CustomBackend
+from .backends import CustomBackend
 # Create your views here.
 
 class Home(TemplateView):
