@@ -9,6 +9,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 user = get_user_model()
 class AccountSerializer(serializers.ModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    is_admin = serializers.BooleanField()
 
     class Meta:
         model = Account
@@ -88,13 +91,13 @@ class UserChangePassword(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['new_password_1'] != attrs['new_password_2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+            raise serializers.ValidationError({"Message":"Password fields didn't match !"})
         
         return attrs
     
     def validate_old_password(self, value):
         if not self.context['request'].user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+            raise serializers.ValidationError({"Message":"Old password is not correct !"})
         return value
 
     

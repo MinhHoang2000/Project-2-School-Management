@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.conf import settings
 from django.views import generic
 from django.views.generic.base import TemplateView
-# from django.contrib.auth import get_user_model, login, logout, authenticate
+from django.contrib.auth import get_user_model
 
-from rest_framework import status, generics
+from rest_framework import serializers, status, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 # from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -63,7 +63,7 @@ class Login(APIView):
                     }
 
                     return Response(data, status=status.HTTP_200_OK)
-        except  :
+        except get_user_model().DoesNotExist :
             return Response("Account does not exist", status=status.HTTP_401_UNAUTHORIZED)
             
 class Logout(GenericAPIView):
@@ -90,15 +90,12 @@ class ChangePassword(APIView):
     #     })
 
     def post(self, request):
-        pw = UserChangePassword(data = request.data, context={'request': request})
-        if pw.is_valid():
-            request.user.set_password(pw.validated_data['new_password_2'])
+        password = UserChangePassword(data = request.data, context={'request': request})
+        try:
+            password.is_valid(raise_exception=True)
+            request.user.set_password(password.validated_data['new_password_2'])
             request.user.save()
-        else :
-            return JsonResponse({
-                'Message':'not valid'
-            })
-        return JsonResponse({
-            'Message':'Change successful'
-        })
+        except serializers.ValidationError:
+            return Response(password.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response("Change password successfully !", status=status.HTTP_200_OK)
 
