@@ -18,7 +18,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.generics import GenericAPIView
 
 # from .forms import ChangePasswordForm, LoginForm
-from .serializers import AccountSerializer, UserLogin, UserChangePassword, RefreshTokenSerializer
+from .serializers import UserLogin, UserChangePassword, RefreshTokenSerializer
 from .backends import CustomBackend
 # Create your views here.
 
@@ -98,4 +98,5 @@ class ChangePassword(APIView):
         except serializers.ValidationError:
             return Response(password.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("Change password successfully !", status=status.HTTP_200_OK)
+
 
