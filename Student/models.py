@@ -8,11 +8,11 @@ import  uuid
 class Student(models.Model):
     id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     personal = models.OneToOneField(Person, on_delete=models.CASCADE)
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE,  null=True)
     achievement = models.ManyToManyField(Achievement)
-    health = models.OneToOneField(Health, on_delete=models.CASCADE)
-    admission_year = models.DateField()
-    account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
+    health = models.OneToOneField(Health, on_delete=models.CASCADE,  null=True)
+    admission_year = models.DateField( null=True)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
     STUDENT_STATUS = (
         ("L", "Learing"),
         ("O", "Out"),
@@ -20,7 +20,7 @@ class Student(models.Model):
         ("F1", "Fail 1 year"),
         ("F2", "Fail 2 years"),
     )
-    status = models.CharField(max_length=2, choices=STUDENT_STATUS)
+    status = models.CharField(max_length=2, choices=STUDENT_STATUS, null=True)
 
     class Meta:
         db_table = "student"
@@ -38,7 +38,7 @@ class Parent(models.Model):
     father_or_mother = models.CharField(max_length=1, choices=CHOICES_PARENT)
     job = models.CharField(max_length=250)
     personal = models.OneToOneField(Person, on_delete=models.CASCADE)
-    student = models.ManyToManyField(Student)
+    student = models.ManyToManyField(Student, related_name='parent')
 
     class Meta:
         db_table = "parent"

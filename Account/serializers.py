@@ -11,9 +11,20 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 user = get_user_model()
 class AccountSerializer(serializers.Serializer):
-    id = serializers.CharField()
     username = serializers.CharField()
     password = serializers.CharField()
+    is_admin = serializers.BooleanField(required=False)
+
+    def create(self, validated_data):
+        if self.context.get('is_admin', False):
+            return user.objects.create_superuser(**validated_data)
+        return user.objects.create_user(**validated_data)
+
+    def validate_username(self, value):
+        account = Account.objects.filter(username=value)
+        if not account.exists():
+            raise serializers.ValidationError({"Message":"Username does not exist !"})
+        return value
 
 class RefreshTokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -32,7 +43,7 @@ class RefreshTokenSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
-class UserLogin(serializers.Serializer):
+class User(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 

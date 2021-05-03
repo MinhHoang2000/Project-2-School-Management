@@ -7,11 +7,11 @@ class Person(models.Model):
     id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
-    date_of_birth = models.DateField()
-    religion = models.CharField(max_length=250)
-    email = models.EmailField(max_length=250)
-    address = models.CharField(max_length=250)
-    phone = models.IntegerField()
+    date_of_birth = models.DateField(null=True)
+    religion = models.CharField(max_length=250,null=True)
+    email = models.EmailField(max_length=250,null=True)
+    address = models.CharField(max_length=250,null=True)
+    phone = models.IntegerField(null=True)
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('FM', 'Female'),

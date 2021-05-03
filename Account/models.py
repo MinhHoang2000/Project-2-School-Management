@@ -1,12 +1,14 @@
 from Account.managers import AccountManager
 from django.db import models
-import uuid
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import EmailValidator
 from django.utils import timezone
 from .managers import AccountManager
 from django.contrib.auth.models import _user_has_perm
+
+import uuid
+import datetime
 
 # Create your models here.
 
