@@ -18,7 +18,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.generics import GenericAPIView
 
 # from .forms import ChangePasswordForm, LoginForm
-from .serializers import AccountSerializer, User, UserChangePassword, RefreshTokenSerializer
+from .serializers import AccountSerializer, UserChangePassword, RefreshTokenSerializer
 from .backends import CustomBackend
 # Create your views here.
 
@@ -27,13 +27,6 @@ class Home(TemplateView):
     template_name = 'Account/Home.html'
     
 class Login(APIView):
-    # renderer_classes = [TemplateHTMLRenderer]
-    # template_name = 'Account/Login.html'
-
-    # permission_classes = [AllowAny]
-    # def get(self, request):
-    #         form = LoginForm()
-    #         return Response({'form':form})
 
     def post(self, request):
         serializer = AccountSerializer(data=request.data)
@@ -47,7 +40,7 @@ class Login(APIView):
                         password=serializer.validated_data['password'],
                         )
             if user == None:
-                #Password not correct but we set message to secure
+                #Password not correct but we set this message to secure
                 return Response("Username or Password is incorrect !", status=status.HTTP_401_UNAUTHORIZED)
             else :
                 # data = TokenSerializer(user).data

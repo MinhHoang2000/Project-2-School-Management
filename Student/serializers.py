@@ -5,7 +5,7 @@ from Person.utils import create_person, create_health
 from django.db.models import fields
 from Student.models import Student
 from Person.serializers import PersonSerializer, AchievementSerializer, HealthSerializer
-from Account.serializers import AccountSerializer, User
+from Account.serializers import AccountSerializer
 from School.serializers import ClassroomSerializer
 
 from rest_framework import serializers
@@ -16,7 +16,7 @@ import random
 import logging
 logger = logging.getLogger(__name__)
 
-def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
+def random_generator(size=8, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -33,21 +33,13 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         logger.error(validated_data)
-        name = validated_data['personal']['first_name']+validated_data['personal']['last_name'] + str(random.randint(1000, 9999))
+        name = validated_data['personal']['first_name'] + validated_data['personal']['last_name'] + str(random.randint(1000, 9999))
         person = create_person(validated_data.pop('personal'))
-        #   account = create_account(validated_data.pop('account'))
-        # if request doesn't have account , auto create account 
-        if not 'account' in validated_data:
-            account = Account.objects.create(
-                username = name.replace(" ", ""),
-                password = random_generator(),
-            )
-        # if request have account
-        else :
-            account = Account.objects.create(
-                username = validated_data['account']['username'],
-                password = validated_data['account']['password'],
-            )
+        data_account = validated_data.pop('account')
+        account = Account.objects.create_user(
+            username = data_account['username'],
+            password = data_account['password'],
+        )
         account.save()
         try :
             student = Student.objects.create(
@@ -61,4 +53,5 @@ class StudentSerializer(serializers.ModelSerializer):
         # if 'health' in validated_data :
         #     create_health(validated_data.pop('health'))
         student.save()
+
         return student

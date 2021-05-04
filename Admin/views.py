@@ -45,7 +45,7 @@ class Delete(APIView):
             selected_user.delete()
         except ValidationError:
             return Response(account.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response('Delete account "' + username + '" successfully !', status=status.HTTP_200_OK)
+        return Response('Delete successfully !', status=status.HTTP_200_OK)
 
 # Show list account
 class ListAccount(APIView):
