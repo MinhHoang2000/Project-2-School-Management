@@ -1,6 +1,4 @@
 from Account.models import Account
-from datetime import date
-from Admin.serializers import RegisterSerializer
 from Person.utils import create_person, create_health
 from django.db.models import fields
 from Student.models import Student
@@ -33,7 +31,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         logger.error(validated_data)
-        name = validated_data['personal']['first_name'] + validated_data['personal']['last_name'] + str(random.randint(1000, 9999))
+        # name = validated_data['personal']['first_name'] + validated_data['personal']['last_name'] + str(random.randint(1000, 9999))
         person = create_person(validated_data.pop('personal'))
         data_account = validated_data.pop('account')
         account = Account.objects.create_user(

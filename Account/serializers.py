@@ -1,22 +1,25 @@
 from .models import Account
-from Admin.serializers import check_username
 
 from django.contrib.auth import get_user_model, password_validation
-from django.core.exceptions import ValidationError
-from rest_framework.authtoken.models import Token
 from django.utils.text import gettext_lazy as _
+
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+import re
 #-------------------------------------------------------------------------------------------------------------------#
-
+def check_username(value):
+    string_check= re.compile('[@_!#$%^&*()<>?/\|}{~: ]')
+    if string_check.search(value) != None:
+        raise serializers.ValidationError({"Message":"Username contains only characters or numbers"})
+# use for Account app
 user = get_user_model()
 class AccountSerializer(serializers.Serializer):
     username = serializers.CharField(validators=[check_username])
     password = serializers.CharField()
     is_admin = serializers.BooleanField(required=False)
-
+    
     def create(self, validated_data):
         if self.context.get('is_admin', False):
             return user.objects.create_superuser(**validated_data)
@@ -40,11 +43,6 @@ class RefreshTokenSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
-# class User(serializers.Serializer):
-#     username = serializers.CharField()
-#     password = serializers.CharField()
-
-
 class UserChangePassword(serializers.Serializer):
     old_password = serializers.CharField(write_only = True)
     new_password_1 = serializers.CharField(write_only = True, validators=[password_validation.validate_password])
@@ -60,4 +58,27 @@ class UserChangePassword(serializers.Serializer):
             raise serializers.ValidationError({"Message":"Old password is not correct !"})
         return value
 
-    
+# Use for Admin app 
+class AccountDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Account
+        fields = '__all__'
+
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(validators=[check_username])
+    password = serializers.CharField()
+    is_admin = serializers.BooleanField()
+
+    def validate_username(self, value):
+        account = Account.objects.filter(username=value)
+        if account.exists():
+            raise serializers.ValidationError({'Message': 'This username is already taken'})
+        return value
+
+    def validate_password(self, value):
+        try:
+            password_validation.validate_password(value)
+        except ValidationError:
+            raise serializers.ValidationError({'Message' :'Password must have characters, numbers and length >= 8'})
+        return value

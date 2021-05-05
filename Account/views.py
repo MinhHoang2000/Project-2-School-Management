@@ -1,33 +1,19 @@
-from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.shortcuts import render
 from django.conf import settings
-from django.views import generic
-from django.views.generic.base import TemplateView
-from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, status, generics
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 # from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from rest_framework.authtoken.models import Token
-from rest_framework.parsers import JSONParser
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.generics import GenericAPIView
 
-# from .forms import ChangePasswordForm, LoginForm
 from .serializers import AccountSerializer, UserChangePassword, RefreshTokenSerializer
 from .backends import CustomBackend
+
 # Create your views here.
 
-class Home(TemplateView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'Account/Home.html'
-    
 class Login(APIView):
-
     def post(self, request):
         serializer = AccountSerializer(data=request.data)
         try:
@@ -60,11 +46,8 @@ class Login(APIView):
             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
             
 class Logout(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated,]
     serializer_class = RefreshTokenSerializer
-    # def get(self, request):
-    #     request.user.auth_token.delete()
-    #     return Response("Loggout successfully !", status=status.HTTP_200_OK)
     def post(self, request, *args):
         token = self.get_serializer(data=request.data)
         token.is_valid(raise_exception=True)
@@ -73,16 +56,7 @@ class Logout(GenericAPIView):
 
 class ChangePassword(APIView):
     permission_classes= [IsAuthenticated,]
-    #renderer_classes = [TemplateHTMLRenderer]
-    #template_name = 'Account/ChangePassword.html'
-    # def get(self, request):
-        
-    #     form = ChangePasswordForm()
-    #     return Response({
-    #         'form':form,
-    #     })
-
-    def post(self, request):
+    def put(self, request):
         password = UserChangePassword(data = request.data, context={'request': request})
         try:
             password.is_valid(raise_exception=True)
