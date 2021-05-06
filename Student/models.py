@@ -8,11 +8,11 @@ import  uuid
 class Student(models.Model):
     id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
     personal = models.OneToOneField(Person, on_delete=models.CASCADE)
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE,  null=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True)
     achievement = models.ManyToManyField(Achievement)
-    health = models.OneToOneField(Health, on_delete=models.CASCADE,  null=True)
-    admission_year = models.DateField( null=True)
-    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    health = models.OneToOneField(Health, on_delete=models.CASCADE, null=True)
+    admission_year = models.DateField(default="14-7-2015")
+    account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
     STUDENT_STATUS = (
         ("L", "Learing"),
         ("O", "Out"),
@@ -20,7 +20,7 @@ class Student(models.Model):
         ("F1", "Fail 1 year"),
         ("F2", "Fail 2 years"),
     )
-    status = models.CharField(max_length=2, choices=STUDENT_STATUS, null=True)
+    status = models.CharField(max_length=2, choices=STUDENT_STATUS, default="L")
 
     class Meta:
         db_table = "student"

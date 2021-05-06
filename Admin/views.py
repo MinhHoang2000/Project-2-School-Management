@@ -34,18 +34,18 @@ class ListAccount(APIView):
 class AccountDetail(APIView):
     # GET -- show account information
     def get(self, request, account_id):
-        if Account.objects.filter(pk=account_id):
+        try:
             data_account = Account.objects.get(pk=account_id)
             account = AccountDetailSerializer(data_account)
             return Response(account.data, status=status.HTTP_200_OK)
-        else:
+        except Account.DoesNotExist:
             return Response('Account does not exits', status=status.HTTP_400_BAD_REQUEST)
     # DELETE -- delete account
     def delete(self, request, account_id):
-        if Account.objects.filter(pk=account_id):
+        try:
             Account.objects.get(pk=account_id).delete()
             return Response('Delete successfully !', status=status.HTTP_200_OK)
-        else:
+        except Account.DoesNotExist:
             return Response('Account does not exits', status=status.HTTP_400_BAD_REQUEST)
 
 class ListStudent(APIView):
@@ -75,3 +75,24 @@ class StudentDetail(APIView):
             return Response(student.data, status=status.HTTP_200_OK)
         else :
             return Response("Student does not exist !", status=status.HTTP_400_BAD_REQUEST)
+    # PUT -- update student information
+    def put(self, request, student_id):
+        try:
+            student = Student.objects.get(pk=student_id)
+            student_serializer = StudentSerializer(student, data=request.data, partial=True)
+            try: 
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.save()
+                return Response(student_serializer.data, status=status.HTTP_200_OK)
+            except serializers.ValidationError:
+                return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Student.DoesNotExist:
+            return Response("Student does not exist", status=status.HTTP_400_BAD_REQUEST)
+    # Delete -- delete student 
+    def delete(self, request, student_id):
+        try:
+            student = Student.objects.get(pk=student_id)
+            student.delete()
+        except Student.DoesNotExist:
+            return Response("Student does not exist", status=status.HTTP_400_BAD_REQUEST)

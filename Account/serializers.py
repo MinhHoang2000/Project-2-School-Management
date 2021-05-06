@@ -25,6 +25,17 @@ class AccountSerializer(serializers.Serializer):
             return user.objects.create_superuser(**validated_data)
         return user.objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        try:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        except KeyError:
+            pass
+
+        instance.save()
+        return instance
 
 class RefreshTokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()
