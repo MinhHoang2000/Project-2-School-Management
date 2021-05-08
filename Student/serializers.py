@@ -2,7 +2,7 @@
 from Account.models import Account
 from Person.utils import create_person, create_health
 from django.db.models import fields
-from Student.models import Student, StudentAchievement
+from Student.models import Parent, Student, StudentAchievement, StudentParent
 from Person.serializers import PersonSerializer, AchievementSerializer, HealthSerializer
 from Account.serializers import AccountSerializer
 from School.serializers import ClassroomSerializer
@@ -94,10 +94,40 @@ class StudentAchievementSerializer(serializers.ModelSerializer):
         model = StudentAchievement
         fields = '__all__'
     
-    def create(self, validated_data, student_pk):
+    def create(self, validated_data):
         student_achievement = StudentAchievement.objects.create(
             student=validated_data['student'],
             achievement=validated_data['achievement']
         )
         student_achievement.save()
         return student_achievement
+
+class ParentSerializer(serializers.ModelSerializer):
+    personal = PersonSerializer()
+    class Meta:
+        model = Parent
+        fields = '__all__'
+
+    def create(self, validated_data):
+        personal = create_person(validated_data.pop('personal'))
+        parent = Parent.objects.create(
+            father_or_mother = validated_data['father_or_mother'],
+            job = validated_data['job'],
+            personal = personal
+        )
+        parent.save()
+        return parent
+
+class StudentParentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StudentParent
+        fields = '__all__'
+
+        def create(self, validated_data):
+            student_parent = StudentParent.objects.create(
+                student = validated_data['student'],
+                parent = validated_data['parent']
+            )
+            student_parent.save()
+            return student_parent
