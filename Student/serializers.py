@@ -1,7 +1,8 @@
+# from Admin.serializers import StudentAchievementSerializer
 from Account.models import Account
 from Person.utils import create_person, create_health
 from django.db.models import fields
-from Student.models import Student
+from Student.models import Student, StudentAchievement
 from Person.serializers import PersonSerializer, AchievementSerializer, HealthSerializer
 from Account.serializers import AccountSerializer
 from School.serializers import ClassroomSerializer
@@ -24,8 +25,7 @@ class StudentSerializer(serializers.ModelSerializer):
     personal = PersonSerializer()
     health = HealthSerializer(required = False ,allow_null = True)
     classroom_id = serializers.CharField()
-    parent_id  = serializers.PrimaryKeyRelatedField(source= 'parent', read_only = True, many = True)
-
+    parent_id  = serializers.PrimaryKeyRelatedField(source = 'parent', read_only = True, many = True)
     class Meta:
         model = Student
         fields = ['id', 'account', 'personal', 'status', 'classroom_id' ,'admission_year', 'health', 'parent_id']
@@ -77,14 +77,27 @@ class StudentSerializer(serializers.ModelSerializer):
         try :
             if instance.health is None:
                 health = create_health(validated_data.pop('health'))
-                instance.health - health
+                instance.health = health
             else:
                 update_health(instance.health, validated_data.pop('health'))
         except KeyError:
             pass
-        
         instance.classroom_id = validated_data.get('classroom_id', instance.classroom_id)
         instance.status = validated_data.get('status', instance.status)
         instance.admission_year = validated_data.get('admission_year', instance.admission_year)
         instance.save()
         return instance
+
+class StudentAchievementSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = StudentAchievement
+        fields = '__all__'
+    
+    def create(self, validated_data, student_pk):
+        student_achievement = StudentAchievement.objects.create(
+            student=validated_data['student'],
+            achievement=validated_data['achievement']
+        )
+        student_achievement.save()
+        return student_achievement

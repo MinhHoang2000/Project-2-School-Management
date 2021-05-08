@@ -25,7 +25,7 @@ CHOICES_SHIFT = (
     )
 # Thông tin lớp học
 class Classroom(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     class_name = models.CharField(max_length=10)
     location = models.CharField(max_length=10)
 
@@ -33,7 +33,7 @@ class Classroom(models.Model):
         db_table = "classroom"
 # Thong tin mon hoc
 class Course(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=250)
     GROUP_COURSE = (
         ("Sc", "Science"),
@@ -46,7 +46,7 @@ class Course(models.Model):
         db_table = "course"
 # Thời khóa biểu
 class Timetable(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     shift = models.CharField(max_length=2, choices=CHOICES_SHIFT)
     day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -64,7 +64,7 @@ CLASSIFICATION = (
     ("D", "Yeu")
 )
 class ClassRecord(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     note = models.TextField()
@@ -80,7 +80,7 @@ class ClassRecord(models.Model):
 
 # Thong tin tai lieu hoc tap
 class StudyDocument(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
     size = models.CharField(max_length=50)
     content_type = models.CharField(max_length=100)

@@ -13,7 +13,7 @@ import datetime
 # Create your models here.
 
 class Permission(models.Model):
-    id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True)
     permission_name = models.CharField(max_length=250)
     permission_code = models.CharField(max_length=128)
 

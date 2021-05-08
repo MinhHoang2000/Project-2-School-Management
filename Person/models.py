@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 import uuid
 from django.utils import timezone
@@ -26,15 +27,15 @@ class Person(models.Model):
 
 # Thành tựu
 class Achievement(models.Model):
-    id = models.CharField(max_length=100,default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     achievement_name = models.CharField(max_length=250)
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateField(default=datetime.now)
 
     class Meta:
         db_table = 'achievement'
 # Hồ sơ sức khỏe
 class Health(models.Model):
-    id = models.CharField(max_length=100, default=uuid.uuid4, primary_key=True)
+    id = models.AutoField(primary_key=True)
     height = models.SmallIntegerField()
     weight = models.SmallIntegerField()
     eye_sight = models.SmallIntegerField()

@@ -11,6 +11,9 @@ from rest_framework.generics import GenericAPIView
 from .serializers import AccountSerializer, UserChangePassword, RefreshTokenSerializer
 from .backends import CustomBackend
 
+from Account.serializers import AccountSerializer, AccountDetailSerializer, RegisterSerializer
+from Account.models import Account
+
 # Create your views here.
 
 class Login(APIView):
@@ -66,4 +69,49 @@ class ChangePassword(APIView):
             return Response(password.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("Change password successfully !", status=status.HTTP_200_OK)
 
+# use for admin
 
+# Show list account
+class ListAccount(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    # GET -- show list account
+    def get(self, request):
+        list_account = Account.objects.all()
+        accounts_serializer = AccountDetailSerializer(list_account, many = True)
+        return Response(accounts_serializer.data, status=status.HTTP_200_OK)
+
+    # POST -- create a account
+    def post(self, request):
+        info = RegisterSerializer(data=request.data)
+        try:
+            info.is_valid(raise_exception=True)
+            user = Account.objects.create_user(
+                username = info.validated_data['username'],
+                password = info.validated_data['password'],
+                is_admin = info.validated_data['is_admin'],
+            ) 
+            user.save()
+            return Response("Create user successfully ! ",status=status.HTTP_201_CREATED)
+        except serializers.ValidationError:
+            return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AccountDetail(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    # GET -- show account information
+    def get(self, request, account_id):
+        try:
+            data_account = Account.objects.get(pk=account_id)
+            account = AccountDetailSerializer(data_account)
+            return Response(account.data, status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response('Account does not exits', status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE -- delete account
+    def delete(self, request, account_id):
+        try:
+            Account.objects.get(pk=account_id).delete()
+            return Response('Delete successfully !', status=status.HTTP_200_OK)
+        except Account.DoesNotExist:
+            return Response('Account does not exits', status=status.HTTP_400_BAD_REQUEST)
