@@ -1,7 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 
-from .models import Classroom
+from .models import Classroom, TeachingInfo
 
 class ClassroomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,3 +12,10 @@ class ClassroomSerializer(serializers.ModelSerializer):
         if not Classroom.objects.filter(class_name=value):
                 return False
         return True
+
+class TeachingInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TeachingInfo
+        fields = '__all__'
+

@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from Teacher.models import Teacher
+from django.db.models.fields import AutoField
 
 # Create your models here.
 
@@ -89,3 +90,15 @@ class StudyDocument(models.Model):
 
     class Meta:
         db_table = "study_document"
+
+# Thông tin lớp dạy, môn dạy
+class TeachingInfo(models.Model):
+    id = AutoField(primary_key=True)
+    school_year = models.CharField(max_length=250)
+    semester = models.SmallIntegerField(max_length=2)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "teaching_information"
