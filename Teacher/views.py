@@ -1,19 +1,20 @@
+from Student.utils import get_student
 from Teacher.utils import get_current_teacher
-from functools import partial
 from Student.serializers import GradeSerializer, StudentSerializer
-from Student.models import Grade, Student
-from rest_framework import exceptions
-from Teacher.models import Teacher
-from rest_framework import serializers, status
-from rest_framework.response import Response
 from School.serializers import TeachingInfoSerializer
-from django.shortcuts import render
-from rest_framework.views import APIView
+from Student.models import Grade, Student
+from Teacher.models import Teacher
 from School.models import Classroom, Course, TeachingInfo
+from .serializers import StudentInfoSerializer, TeacherSerializer
+
+from rest_framework import exceptions
+from rest_framework import serializers, status
+from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework import generics
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import StudentInfoSerializer, TeacherSerializer
+
 # Create your views here.
 
 # Show class, course , ... which current teacher teaches
@@ -35,6 +36,7 @@ class ListTeachingInfo(generics.ListAPIView):
                 return exceptions.NotFound('Teacher does not have teaching information')
         except Teacher.DoesNotExist:
             return exceptions.NotFound('Teacher does not exist')
+
 # Show list of students in a class
 class ListStudent(generics.ListAPIView):
 
@@ -45,10 +47,12 @@ class ListStudent(generics.ListAPIView):
     def get_queryset(self):
         try:
            classroom = Classroom.objects.get(pk=self.kwargs['classroom_id'])
-           student = Student.objects.all().filter(classroom=classroom).order_by('personal__last_name', 'personal__first_name', 'personal__date_of_birth')
+           student = Student.objects.all().filter(classroom=classroom).order_by(
+               'personal__last_name', 'personal__first_name', 'personal__date_of_birth')
            return student
         except Classroom.DoesNotExist:
             return exceptions.NotFound('Class does not exist')
+
 # Show list of student's grade of a course in a class
 class ListGrade(generics.ListAPIView):
 
@@ -74,6 +78,7 @@ class ListGrade(generics.ListAPIView):
                 return exceptions.NotFound('Class does not exist')
         except Teacher.DoesNotExist:
             return exceptions.NotFound('Teacher does not exist')
+
 # Grade Detail
 class GradeDetail(APIView):
 
@@ -109,3 +114,21 @@ class GradeDetail(APIView):
         except Teacher.DoesNotExist:
             return Response('Teacher does not exist', status=status.HTTP_400_BAD_REQUEST)
 
+# Show grade of all courses of a student
+class AllGradeStudent(generics.ListAPIView):
+    queryset = Grade.objects.all()
+    serializer_class = GradeSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('school_year', 'semester', )
+
+    def get_queryset(self):
+        student_id = self.kwargs['student_id']
+        student = get_student(student_id)
+        try:
+            grade_student = Grade.objects.all().filter(student=student).order_by(
+                'student__personal__last_name', 
+                'student__personal__first_name', 
+                'student__personal__date_of_birth' )
+            return grade_student
+        except Grade.DoesNotExist:
+            return exceptions.NotFound('Grade of student does not exist')
