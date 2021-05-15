@@ -95,7 +95,7 @@ class StudyDocument(models.Model):
 class TeachingInfo(models.Model):
     id = AutoField(primary_key=True)
     school_year = models.CharField(max_length=250)
-    semester = models.SmallIntegerField(max_length=2)
+    semester = models.SmallIntegerField()
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

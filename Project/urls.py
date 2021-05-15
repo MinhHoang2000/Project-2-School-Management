@@ -8,5 +8,5 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('admin/', include('Admin.urls')),
     path('account/', include('Account.urls')),
-    path('teacher/me/', include('Teacher.urls')),
+    path('teacher/', include('Teacher.urls')),
 ]

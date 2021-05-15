@@ -1,11 +1,13 @@
 # from Admin.serializers import StudentAchievementSerializer
+from Teacher.serializers import StudentInfoSerializer, TeacherSerializer
+from django.db import models
 from Account.models import Account
 from Person.utils import create_person, create_health
 from django.db.models import fields
-from Student.models import Parent, Student, StudentAchievement, StudentParent
+from Student.models import Grade, Parent, Student, StudentAchievement, StudentParent
 from Person.serializers import PersonSerializer, AchievementSerializer, HealthSerializer
 from Account.serializers import AccountSerializer
-from School.serializers import ClassroomSerializer
+from School.serializers import ClassroomSerializer, CourseSerializer
 from Person.utils import update_person, update_health
 
 from rest_framework import serializers
@@ -131,3 +133,21 @@ class StudentParentSerializer(serializers.ModelSerializer):
             )
             student_parent.save()
             return student_parent
+
+class GradeSerializer(serializers.ModelSerializer):
+
+    course = CourseSerializer()
+    student = StudentInfoSerializer()
+    teacher = TeacherSerializer()
+    school_year = serializers.CharField(required = False ,allow_null = True)
+    test_p = serializers.FloatField(required = False ,allow_null = True)
+    mid_term_p = serializers.FloatField(required = False ,allow_null = True)
+    term_p = serializers.FloatField(required = False ,allow_null = True)
+    final_term_p = serializers.FloatField(required = False ,allow_null = True)
+
+    class Meta:
+        model = Grade
+        fields = ['id', 'course', 'student', 'teacher', 'school_year', 'semester' ,'test_p', 'mid_term_p', 'term_p', 'final_term_p']
+
+    def create(self, validated_data):
+        return super().create(validated_data)

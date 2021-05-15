@@ -1,3 +1,4 @@
+from Teacher.models import Teacher
 from django.db import models
 from Person.models import  Person, Achievement, Health
 from School.models import  Classroom, Course
@@ -62,18 +63,20 @@ class StudentParent(models.Model):
         db_table = "student_parent"
 #-------
 # Điểm học sinh
-class Score(models.Model):
+class Grade(models.Model):
     id = models.AutoField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, default=1)
     school_year = models.CharField(max_length=250)
-    test_p = models.FloatField()
-    mid_term_p = models.FloatField()
-    term_p = models.FloatField()
-    final_term_p = models.FloatField()
+    semester = models.SmallIntegerField(default=1)
+    test_p = models.FloatField(null=True)
+    mid_term_p = models.FloatField(null=True)
+    term_p = models.FloatField(null=True)
+    final_term_p = models.FloatField(null=True)
 
     class Meta:
-        db_table = "score"
+        db_table = "grade"
 # Điểm hạnh kiểm
 class Conduct(models.Model):
     SCORES = [('T', 'Tot'),

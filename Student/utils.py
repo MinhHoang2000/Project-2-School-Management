@@ -1,4 +1,4 @@
-from Student.models import Student, Parent, StudentAchievement, Score
+from Student.models import Student, Parent, StudentAchievement
 from rest_framework import exceptions
 
 def get_student(student_id):
