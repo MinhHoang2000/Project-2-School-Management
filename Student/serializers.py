@@ -136,9 +136,9 @@ class StudentParentSerializer(serializers.ModelSerializer):
 
 class GradeSerializer(serializers.ModelSerializer):
 
-    course = CourseSerializer()
-    student = StudentInfoSerializer()
-    teacher = TeacherSerializer()
+    course = CourseSerializer(required = False)
+    student = StudentInfoSerializer(required = False)
+    teacher = TeacherSerializer(required = False)
     school_year = serializers.CharField(required = False ,allow_null = True)
     test_p = serializers.FloatField(required = False ,allow_null = True)
     mid_term_p = serializers.FloatField(required = False ,allow_null = True)
@@ -151,3 +151,12 @@ class GradeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        
+        instance.test_p = validated_data.get('test_p', instance.test_p)
+        instance.mid_term_p = validated_data.get('mid_term_p', instance.mid_term_p)
+        instance.term_p = validated_data.get('term_p', instance.term_p)
+        instance.final_term_p = validated_data.get('final_term_p', instance.final_term_p)
+        instance.save()
+        return instance

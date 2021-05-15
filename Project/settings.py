@@ -177,6 +177,7 @@ USE_L10N = True
 
 USE_TZ = False
 
+
 # local_datetime = local_datetime.astimezone(local_timezone)
 
 # Static files (CSS, JavaScript, Images)

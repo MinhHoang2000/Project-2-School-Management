@@ -240,6 +240,7 @@ class ParentDetail(APIView):
         parent_serializer = ParentSerializer(parent, data=request.data, partial=True)
         try:
             parent_serializer.is_valid(raise_exception=True)
+            parent_serializer.save()
             return Response(parent_serializer.data, status=status.HTTP_200_OK)
         except serializers.ValidationError:
             return Response(parent_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
