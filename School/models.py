@@ -1,5 +1,6 @@
 from django.db import models
-import uuid
+import datetime
+import os
 from Teacher.models import Teacher
 from django.db.models.fields import AutoField
 from django.utils import timezone
@@ -33,6 +34,8 @@ class Classroom(models.Model):
 
     class Meta:
         db_table = "classroom"
+    def __str__(self):
+        return self.class_name
 # Thong tin mon hoc
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
@@ -46,6 +49,8 @@ class Course(models.Model):
 
     class Meta:
         db_table = "course"
+    def __str__(self):
+        return self.course_name
 # Thời khóa biểu
 class Timetable(models.Model):
     id = models.AutoField(primary_key=True)
@@ -85,14 +90,20 @@ class ClassRecord(models.Model):
     class Meta:
         db_table = "class_record"
 
+def upload_to(instance, filename):
+    now = datetime.datetime.now()
+    return f"StudyDocument/class-{instance.classroom}/teacher-{instance.teacher}/course-{instance.course}/{now:%Y/%m/%d}/{filename}"
 # Thong tin tai lieu hoc tap
 class StudyDocument(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=250)
-    size = models.CharField(max_length=50)
-    content_type = models.CharField(max_length=100)
-    file_data = models.FileField(upload_to='StudyDocument/%Y/%m/%d/')
-    # course = models.ForeignKey(CourseInfo, on_delete=models.CASCADE)
+    # name = models.CharField(max_length=250)
+    # size = models.CharField(max_length=50)
+    # content_type = models.CharField(max_length=100)
+    file_data = models.FileField(upload_to=upload_to)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True)
+
 
     class Meta:
         db_table = "study_document"

@@ -1,0 +1,48 @@
+=========================
+{
+	"username":"hoang",
+	"password":"123456789abc"
+}
+========================
+{
+    "id": "2ae64af7-c3fd-416e-8452-35ec3c788d20",
+    "username": "hoang",
+    "is_admin": false,
+    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYyMTc1OTM4OSwianRpIjoiNmE1YzAzZTY1MWQ4NGM1YjkzYTI2MjMxODMzNTdkMTMiLCJ1c2VyX2lkIjoiMmFlNjRhZjctYzNmZC00MTZlLTg0NTItMzVlYzNjNzg4ZDIwIn0.8A3BxfzbZdqAyT2Ft0kMXarvcgsGSTobsW65-qJDACg",
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjIxNjk0NTg5LCJqdGkiOiJlM2ZhNzY2Zjc3ZWM0OWY0OTM3ODNmZTRiNWNkODMwMSIsInVzZXJfaWQiOiIyYWU2NGFmNy1jM2ZkLTQxNmUtODQ1Mi0zNWVjM2M3ODhkMjAifQ.mRNsMeEC3cQLlvUQdxH_OEeJGuV2iiEI-yhPh3y6Nn0",
+    "access_expires": 21600,
+    "refresh_expires": 86400
+}
+======================
+{	
+	"account":{
+			"username":"hoang",
+			"password":"123456789abc",
+            "is_admin":"False"
+		},
+	"personal":{
+			"first_name":"Do",
+			"last_name":"Hoang",
+			"date_of_birth":null,
+			"religion":null,
+			"email":null,
+			"address":null,
+			"phone":null,
+			"gender":"M"
+		},
+	"status":"L",
+	"classroom_id": "cb65ba9a-21ca-4a45-89a0-10c388e044cd",
+	"achievement":null,
+	"health":null,
+	"admission_year":"2021-05-03"
+}
+{
+	"old_password":"123456789abc",
+    "new_password_1":"1",
+    "new_password_2": "1"
+}
+{
+	"note":"Lớp ngoan",
+    "student_num":45,
+    "classification":"B"
+}

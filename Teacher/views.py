@@ -1,21 +1,24 @@
+from Teacher.forms import FormUpload
+from django.db.models import query
 from Project.pagination import CustomPageNumberPagination
-from School.utils import get_classrecord
+from School.utils import get_classrecord, get_classroom, get_course
 from Student.utils import get_student
 from Teacher.utils import get_current_teacher
 from Student.serializers import GradeSerializer, StudentSerializer
-from School.serializers import ClassRecordSerializer, TeachingInfoSerializer
+from School.serializers import ClassRecordSerializer, StudyDocumentSerializer, TeachingInfoSerializer
 from Student.models import Grade, Student
 from Teacher.models import Teacher
-from School.models import ClassRecord, Classroom, Course, TeachingInfo
+from School.models import ClassRecord, Classroom, Course, StudyDocument, TeachingInfo
 from .serializers import StudentInfoSerializer, TeacherSerializer
 
 from rest_framework import exceptions
 from rest_framework import serializers, status
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import FileUploadParser, JSONParser, MultiPartParser
 from rest_framework import generics
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import ParseError
 
 # Create your views here.
 
@@ -188,4 +191,20 @@ class ClassRecordCreate(APIView):
             return Response(classrecord_serializer.data, status=status.HTTP_201_CREATED)
         except serializers.ValidationError:
             return Response(classrecord_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+
+# ---
+class UploadStudyDocument(APIView):
+    parser_classes = (JSONParser, MultiPartParser, FileUploadParser)
+
+    def post(self, request, *args, **kwargs):
+        file_serializer = StudyDocumentSerializer(data=request.data)
+        try:
+            file_serializer.is_valid(raise_exception=True)
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_200_OK)
+        except serializers.ValidationError:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+       
+
+
+    

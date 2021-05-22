@@ -4,7 +4,7 @@ from Teacher.serializers import TeacherSerializer
 from django.db.models import fields
 from rest_framework import serializers
 
-from .models import ClassRecord, Classroom, Course, TeachingInfo, Timetable
+from .models import ClassRecord, Classroom, Course, StudyDocument, TeachingInfo, Timetable
 CHOICES_DAY = [('Mon', 'Monday'),
                ('Tue', 'Tuesday'),
                ('Wed', 'Wednesday'),
@@ -93,3 +93,11 @@ class ClassRecordSerializer(serializers.ModelSerializer):
         instance.classification = validated_data.get('classification', instance.classification)
         instance.save()
         return instance
+class StudyDocumentSerializer(serializers.ModelSerializer):
+    teacher_id = serializers.CharField()
+    course_id = serializers.IntegerField()
+    classroom_id = serializers.IntegerField()
+
+    class Meta:
+        model = StudyDocument
+        fields = '__all__'
