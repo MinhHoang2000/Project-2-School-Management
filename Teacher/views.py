@@ -1,3 +1,4 @@
+from Project.pagination import CustomPageNumberPagination
 from School.utils import get_classrecord
 from Student.utils import get_student
 from Teacher.utils import get_current_teacher
@@ -139,6 +140,7 @@ class AllGradeStudent(generics.ListAPIView):
 class ListClassRecord(generics.ListAPIView):
     queryset = ClassRecord.objects.all()
     serializer_class = ClassRecordSerializer
+    pagination_class = CustomPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('id', 'day_of_week', 'study_week', 'classroom_id', 'course_id', 'school_year', 'semester')
 
