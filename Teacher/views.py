@@ -1,10 +1,11 @@
+from School.utils import get_classrecord
 from Student.utils import get_student
 from Teacher.utils import get_current_teacher
 from Student.serializers import GradeSerializer, StudentSerializer
-from School.serializers import TeachingInfoSerializer
+from School.serializers import ClassRecordSerializer, TeachingInfoSerializer
 from Student.models import Grade, Student
 from Teacher.models import Teacher
-from School.models import Classroom, Course, TeachingInfo
+from School.models import ClassRecord, Classroom, Course, TeachingInfo
 from .serializers import StudentInfoSerializer, TeacherSerializer
 
 from rest_framework import exceptions
@@ -113,6 +114,7 @@ class GradeDetail(APIView):
                 Response("Not found grade", status=status.HTTP_400_BAD_REQUEST)
         except Teacher.DoesNotExist:
             return Response('Teacher does not exist', status=status.HTTP_400_BAD_REQUEST)
+    
 
 # Show grade of all courses of a student
 class AllGradeStudent(generics.ListAPIView):
@@ -132,3 +134,56 @@ class AllGradeStudent(generics.ListAPIView):
             return grade_student
         except Grade.DoesNotExist:
             return exceptions.NotFound('Grade of student does not exist')
+
+# Show list classrecord
+class ListClassRecord(generics.ListAPIView):
+    queryset = ClassRecord.objects.all()
+    serializer_class = ClassRecordSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id', 'day_of_week', 'study_week', 'classroom_id', 'course_id', 'school_year', 'semester')
+
+    def get_queryset(self):
+        user = self.request.user
+        try:
+            teacher = Teacher.objects.get(account=user)
+            classrecord = ClassRecord.objects.all().order_by(
+                 'school_year', 'semester', 'study_week', 'day_of_week', 'classroom__class_name'
+            )
+            return classrecord
+        except Teacher.DoesNotExist:
+            return exceptions.NotFound('Teacher does not exist')
+
+# 
+class ClassRecordDetail(APIView):
+
+    def get(self, request, classrecord_id):
+        classrecord = get_classrecord(classrecord_id)
+        classrecord_serializer = ClassRecordSerializer(classrecord)
+        return Response(classrecord_serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, classrecord_id):
+        user = self.request.user
+        teacher = get_current_teacher(user)
+        try:
+            classrecord = ClassRecord.objects.get(pk=classrecord_id, teacher=teacher)
+            classrecord_serializer = ClassRecordSerializer(classrecord, data=request.data, partial = True)
+            try:
+                classrecord_serializer.is_valid(raise_exception=True)
+                classrecord_serializer.save()
+                return Response(classrecord_serializer.data, status=status.HTTP_200_OK)
+            except serializers.ValidationError:
+                return Response(classrecord_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except ClassRecord.DoesNotExist:
+            return Response('Not found classrecord_id or you do not have permission', status=status.HTTP_400_BAD_REQUEST)
+# --
+class ClassRecordCreate(APIView):
+    def post(self, request):
+        classrecord_serializer = ClassRecordSerializer(data=request.data)
+        try:
+            classrecord_serializer.is_valid(raise_exception=True)
+            classrecord_serializer.save()
+            return Response(classrecord_serializer.data, status=status.HTTP_201_CREATED)
+        except serializers.ValidationError:
+            return Response(classrecord_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            

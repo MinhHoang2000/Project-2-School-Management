@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from Teacher.models import Teacher
 from django.db.models.fields import AutoField
+from django.utils import timezone
 
 # Create your models here.
 
@@ -48,8 +49,11 @@ class Course(models.Model):
 # Thời khóa biểu
 class Timetable(models.Model):
     id = models.AutoField(primary_key=True)
-    shift = models.CharField(max_length=2, choices=CHOICES_SHIFT)
-    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY)
+    shift = models.CharField(max_length=2, choices=CHOICES_SHIFT, default="M1")
+    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY, default="Mon")
+    study_week = models.CharField(max_length=128, default='Week 1')
+    school_year = models.CharField(max_length=250, default='2021-2022')
+    semester = models.SmallIntegerField(default=1)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
@@ -68,13 +72,15 @@ class ClassRecord(models.Model):
     id = models.AutoField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE)
-    note = models.TextField()
-    student_num = models.IntegerField()
+    note = models.TextField(default="Default note")
+    student_num = models.IntegerField(default=40)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    classification = models.CharField(max_length=1, choices=CLASSIFICATION)
-    shift = models.CharField(max_length=2, choices=CHOICES_SHIFT)
-    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY)
-    study_week = models.CharField(max_length=128)
+    classification = models.CharField(max_length=1, choices=CLASSIFICATION, default='A')
+    shift = models.CharField(max_length=2, choices=CHOICES_SHIFT, default='M1')
+    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY, default='Mon')
+    study_week = models.CharField(max_length=128, default='Week 1')
+    school_year = models.CharField(max_length=250, default='2021-2022')
+    semester = models.SmallIntegerField(default=1)
 
     class Meta:
         db_table = "class_record"

@@ -3,8 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework import exceptions
 from .models import Teacher
 
-def get_current_teacher(self):
-    account = self.request.user
+def get_current_teacher(account):
     if account is AnonymousUser:
         return exceptions.NotAuthenticated("You need login")
     try: 
@@ -12,3 +11,4 @@ def get_current_teacher(self):
         return teacher
     except Teacher.DoesNotExist:
         return exceptions.NotFound("Not found teacher")
+
