@@ -1,5 +1,8 @@
-from .models import ClassRecord, Classroom, Course
+from django.conf import settings
+from .models import ClassRecord, Classroom, Course, StudyDocument
 from rest_framework import exceptions
+import os
+from rest_framework import serializers
 
 def get_classrecord(classrecord_id):
     try:
@@ -21,3 +24,14 @@ def get_course(course_id):
         return course
     except exceptions:
         return exceptions.NotFound("Not found course")
+
+def get_studydocument(file_id):
+    try:
+        study_document = StudyDocument.objects.get(pk=file_id)
+        return study_document
+    except StudyDocument.DoesNotExist:
+        raise exceptions.NotFound("Not found file")
+
+# def delete_studydocument(file_id):
+#     study_document = get_studydocument(file_id)
+#     return study_document.delete()

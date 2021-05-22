@@ -1,7 +1,6 @@
-from Teacher.forms import FormUpload
 from django.db.models import query
 from Project.pagination import CustomPageNumberPagination
-from School.utils import get_classrecord, get_classroom, get_course
+from School.utils import get_classrecord, get_classroom, get_course, get_studydocument
 from Student.utils import get_student
 from Teacher.utils import get_current_teacher
 from Student.serializers import GradeSerializer, StudentSerializer
@@ -204,7 +203,15 @@ class UploadStudyDocument(APIView):
             return Response(file_serializer.data, status=status.HTTP_200_OK)
         except serializers.ValidationError:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-       
+    
+    def delete(self, request):
+        studydocument_id = request.query_params.get('id')
+        if id:
+            file = get_studydocument(studydocument_id)
+            file.delete()
+            return Response({'Delete successful'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'id query param need to be provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
     
