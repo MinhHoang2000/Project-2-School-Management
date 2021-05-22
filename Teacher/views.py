@@ -192,6 +192,27 @@ class ClassRecordCreate(APIView):
             return Response(classrecord_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # ---
+class ListStudyDocument(generics.ListAPIView):
+    queryset = StudyDocument.objects.all()
+    serializer_class = StudyDocumentSerializer
+    pagination_class = CustomPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id', 'classroom_id', 'teacher_id','course_id', )
+
+    def get_queryset(self):
+        user = self.request.user
+        try:
+            teacher = Teacher.objects.get(account=user)
+            studydocument = StudyDocument.objects.all().filter(teacher=teacher).order_by(
+                'date',
+                'classroom__class_name',
+                'course__course_name'
+            )
+            return studydocument
+        except Teacher.DoesNotExist:
+            return exceptions.NotFound('Teacher does not exist')
+
+
 class UploadStudyDocument(APIView):
     parser_classes = (JSONParser, MultiPartParser, FileUploadParser)
 
