@@ -101,7 +101,7 @@ class StudyDocument(models.Model):
     # size = models.CharField(max_length=50)
     # content_type = models.CharField(max_length=100)
     file = models.FileField(upload_to=upload_to)
-    date = models.DateTimeField(default=datetime.datetime.now())
+    date = models.DateTimeField(default=datetime.datetime.now)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True)
