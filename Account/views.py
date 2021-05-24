@@ -35,7 +35,6 @@ class Login(APIView):
                 # data = TokenSerializer(user).data
                 refresh = TokenObtainPairSerializer.get_token(user)
                 data = {
-                    'id': user.id,
                     'username':user.username,
                     'is_admin':user.is_admin,
                     'refresh_token': str(refresh),

@@ -17,9 +17,7 @@ class CustomBackend(BaseBackend):
             else:
                 return None
         except Account.DoesNotExist:
-            return JsonResponse({
-                'Message':"Can't find username"
-            })
+            return None
 
     def get_user(self, user_id):
         try:
