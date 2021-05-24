@@ -1,4 +1,5 @@
 from django.db import models
+from Teacher.models import Teacher
 import uuid
 # Create your models here.
 
@@ -23,7 +24,7 @@ CHOICES_DAY = (
         ("7", "Thứ 7"),
     )
 # Thong tin thiet bi
-class DeviceInfo(models.Model):
+class Device(models.Model):
     id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
     device_name = models.CharField(max_length=250)
     DEVICE_STATUS = (
@@ -32,15 +33,18 @@ class DeviceInfo(models.Model):
         ("BB", "Be Borrowed")
     )
     device_status = models.CharField(max_length=2, choices=DEVICE_STATUS)
+    amount = models.IntegerField()
+    prince = models.CharField(max_length=256, default="2.000.000 VND")
 
     class Meta:
         db_table = "device"
 
-class DeviceMan(models.Model):
+class BorrowedDevice(models.Model):
     id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, primary_key=True)
-    device = models.ForeignKey(DeviceInfo, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY )
     shift = models.CharField(max_length=2, choices=CHOICES_SHIFT)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 
     class Meta:
-        db_table = 'device_manage'
+        db_table = 'borrowed-device'
