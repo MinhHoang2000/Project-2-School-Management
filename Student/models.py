@@ -12,7 +12,7 @@ class Student(models.Model):
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True)
     # achievement = models.ManyToManyField(Achievement)
     health = models.OneToOneField(Health, on_delete=models.CASCADE, null=True)
-    admission_year = models.DateField(default="14-7-2015")
+    admission_year = models.DateField(default="2015-7-14")
     account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
     STUDENT_STATUS = (
         ("L", "Learing"),

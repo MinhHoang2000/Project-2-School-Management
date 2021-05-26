@@ -10,7 +10,7 @@ from Teacher.models import Teacher
 from School.models import ClassRecord, Classroom, Course, StudyDocument, TeachingInfo
 from .serializers import StudentInfoSerializer, TeacherSerializer
 
-from rest_framework import exceptions
+from rest_framework import exceptions, filters
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.parsers import FileUploadParser, JSONParser, MultiPartParser
@@ -26,7 +26,8 @@ class ListTeachingInfo(generics.ListAPIView):
     
     queryset = TeachingInfo.objects.all()
     serializer_class = TeachingInfoSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    ordering_fields = ['school_year', 'semester', 'teacher__personal']
     filter_fields = ('classroom', 'course', )
 
     def get_queryset(self):
@@ -46,7 +47,9 @@ class ListStudent(generics.ListAPIView):
 
     queryset = Student.objects.all()
     serializer_class = StudentInfoSerializer
-    filter_backends = (DjangoFilterBackend,)
+    # pagination_class = CustomPageNumberPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    ordering_fields = ['personal__last_name', 'personal__first_name', ]
     
     def get_queryset(self):
         try:

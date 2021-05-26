@@ -27,10 +27,10 @@ class StudentSerializer(serializers.ModelSerializer):
     personal = PersonSerializer()
     health = HealthSerializer(required = False ,allow_null = True)
     classroom_id = serializers.CharField()
-    parent_id  = serializers.PrimaryKeyRelatedField(source = 'parent', read_only = True, many = True)
+    # parent_id  = serializers.PrimaryKeyRelatedField(source = 'parent', read_only = True, many = True)
     class Meta:
         model = Student
-        fields = ['id', 'account', 'personal', 'status', 'classroom_id' ,'admission_year', 'health', 'parent_id']
+        fields = ['id', 'account', 'personal', 'status', 'classroom_id' ,'admission_year', 'health']
 
     def create(self, validated_data):
         # logger.error(validated_data)
