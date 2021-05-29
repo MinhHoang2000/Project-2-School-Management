@@ -65,8 +65,9 @@ class ListGrade(generics.ListAPIView):
 
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_fields = ('course', 'school_year', 'semester')
+    ordering_fields = ['student__personal__first_name', 'student__personal__last_name', ]
 
     def get_queryset(self):
         user = self.request.user
@@ -126,8 +127,9 @@ class GradeDetail(APIView):
 class AllGradeStudent(generics.ListAPIView):
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_fields = ('school_year', 'semester', )
+    ordering_fields = ['course__course_name',]
 
     def get_queryset(self):
         student_id = self.kwargs['student_id']
@@ -146,8 +148,10 @@ class ListClassRecord(generics.ListAPIView):
     queryset = ClassRecord.objects.all()
     serializer_class = ClassRecordSerializer
     pagination_class = CustomPageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_fields = ('id', 'day_of_week', 'study_week', 'classroom_id', 'course_id', 'school_year', 'semester')
+    ordering_fields = ['day_of_week', 'study_week', 'semester', 'school_year']
+
 
     def get_queryset(self):
         user = self.request.user
@@ -160,7 +164,7 @@ class ListClassRecord(generics.ListAPIView):
         except Teacher.DoesNotExist:
             return exceptions.NotFound('Teacher does not exist')
 
-# 
+# Show ClassRecord Detail
 class ClassRecordDetail(APIView):
 
     def get(self, request, classrecord_id):
@@ -199,8 +203,9 @@ class ListStudyDocument(generics.ListAPIView):
     queryset = StudyDocument.objects.all()
     serializer_class = StudyDocumentSerializer
     pagination_class = CustomPageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_fields = ('id', 'classroom_id', 'teacher_id','course_id', )
+    ordering_fields = ['date', 'classroom__class_name', 'course__course_name',]
 
     def get_queryset(self):
         user = self.request.user
