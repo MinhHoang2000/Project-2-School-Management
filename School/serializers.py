@@ -24,6 +24,13 @@ CHOICES_SHIFT = (
         ("A4", "15:50-16:35"),
         ("A5", "16:45-17:30"),
     )
+CHOICES_DAY_NEW = [(2, 'Monday'),
+               (3, 'Tuesday'),
+               (4, 'Wednesday'),
+               (5, 'Thusday'),
+               (6, 'Friday'),
+               (7, 'Saturday'),
+               (8, 'Sunday')]
 class ClassroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classroom
@@ -46,9 +53,13 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 class TimetableSerializer(serializers.ModelSerializer):
+    course_id = serializers.IntegerField()
+    classroom_id = serializers.IntegerField()
+    teacher_id = serializers.CharField()
     class Meta:
         model = Timetable
-        fields = '__all__'
+        fields = ['id', 'course_id', 'classroom_id', 'teacher_id',
+                    'shift', 'day_of_week', 'study_week', 'semester', 'school_year']
 class ClassRecordSerializer(serializers.ModelSerializer):
     CLASSIFICATION = (
     ("A", "Tot"),
@@ -63,7 +74,7 @@ class ClassRecordSerializer(serializers.ModelSerializer):
     student_num = serializers.IntegerField(required=False)
     classification = serializers.ChoiceField(choices=CLASSIFICATION, allow_blank=True,required=False)
     shift = serializers.ChoiceField(choices=CHOICES_SHIFT,required=False)
-    day_of_week = serializers.ChoiceField(choices=CHOICES_DAY,required=False)
+    day_of_week = serializers.ChoiceField(choices=CHOICES_DAY_NEW, required=False)
     study_week = serializers.CharField(required=False)
     semester = serializers.IntegerField(required=False)
     school_year = serializers.CharField(required=False)

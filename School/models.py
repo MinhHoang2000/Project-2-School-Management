@@ -27,6 +27,13 @@ CHOICES_SHIFT = (
         ("A4", "15:50-16:35"),
         ("A5", "16:45-17:30"),
     )
+CHOICES_DAY_NEW = [(2, 'Monday'),
+               (3, 'Tuesday'),
+               (4, 'Wednesday'),
+               (5, 'Thusday'),
+               (6, 'Friday'),
+               (7, 'Saturday'),
+               (8, 'Sunday')]
 # Thông tin lớp học
 class Classroom(models.Model):
     id = models.AutoField(primary_key=True)
@@ -56,7 +63,7 @@ class Course(models.Model):
 class Timetable(models.Model):
     id = models.AutoField(primary_key=True)
     shift = models.CharField(max_length=2, choices=CHOICES_SHIFT, default="M1")
-    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY, default="Mon")
+    day_of_week = models.IntegerField(choices=CHOICES_DAY_NEW, default=2)
     study_week = models.CharField(max_length=128, default='Week 1')
     school_year = models.CharField(max_length=250, default='2021-2022')
     semester = models.SmallIntegerField(default=1)
@@ -83,7 +90,7 @@ class ClassRecord(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     classification = models.CharField(max_length=1, choices=CLASSIFICATION, default='A')
     shift = models.CharField(max_length=2, choices=CHOICES_SHIFT, default='M1')
-    day_of_week = models.CharField(max_length=3, choices=CHOICES_DAY, default='Mon')
+    day_of_week = models.IntegerField(choices=CHOICES_DAY_NEW, default=2)
     study_week = models.CharField(max_length=128, default='Week 1')
     school_year = models.CharField(max_length=250, default='2021-2022')
     semester = models.SmallIntegerField(default=1)

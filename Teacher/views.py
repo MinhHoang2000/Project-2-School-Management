@@ -4,10 +4,10 @@ from School.utils import get_classrecord, get_classroom, get_course, get_studydo
 from Student.utils import get_student
 from Teacher.utils import get_current_teacher
 from Student.serializers import GradeSerializer, StudentSerializer
-from School.serializers import ClassRecordSerializer, StudyDocumentSerializer, TeachingInfoSerializer
+from School.serializers import ClassRecordSerializer, StudyDocumentSerializer, TeachingInfoSerializer, TimetableSerializer
 from Student.models import Grade, Student
 from Teacher.models import Teacher
-from School.models import ClassRecord, Classroom, Course, StudyDocument, TeachingInfo
+from School.models import ClassRecord, Classroom, Course, StudyDocument, TeachingInfo, Timetable
 from .serializers import StudentInfoSerializer, TeacherSerializer
 
 from rest_framework import exceptions, filters
@@ -18,6 +18,13 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ParseError
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+
+from Project import settings
+import os
+import mimetypes
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -224,6 +231,9 @@ class ListStudyDocument(generics.ListAPIView):
 class UploadStudyDocument(APIView):
     parser_classes = (JSONParser, MultiPartParser, FileUploadParser)
 
+    def get(self, request):
+        pass;
+
     def post(self, request, *args, **kwargs):
         file_serializer = StudyDocumentSerializer(data=request.data)
         try:
@@ -242,5 +252,37 @@ class UploadStudyDocument(APIView):
         else:
             return Response({'id query param need to be provided'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated,])
+def download(request, studydocument_id):
+    f = get_studydocument(studydocument_id)
+    filepath = os.path.join(settings.BASE_DIR, f.file.path)
+    if os.path.exists(filepath):
+        filename = os.path.basename(filepath)
+        mimetype = mimetypes.guess_type(filepath)
+        with open(filepath, 'rb') as f:
+            response = HttpResponse(f.read(), content_type=mimetype)
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+    else:
+        return Response({'File not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    
+# ------------------- Xem lich giang day ----------------
+class TeacherTimetable(generics.ListAPIView):
+    queryset = Timetable.objects.all()
+    serializer_class = TimetableSerializer
+    pagination_class = CustomPageNumberPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    filter_fields = ('school_year', 'semester', 'study_week', 'day_of_week', 'shift', 'course_id', 'teacher_id', 'classroom_id')
+    ordering_fields = ['day_of_week', ]
+
+    def get_queryset(self):
+        user = self.request.user
+        teacher = get_current_teacher(user)
+        try:
+            teacherTimetable = Timetable.objects.get(teacher=teacher)
+            return teacherTimetable
+        except Timetable.DoesNotExist:
+            return exceptions.NotFound("Teacher do not have timetable")
+
+

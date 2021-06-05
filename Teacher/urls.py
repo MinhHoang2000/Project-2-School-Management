@@ -1,5 +1,6 @@
+from os import name
 from django.urls import path, re_path
-from .views import AllGradeStudent, ClassRecordCreate, ClassRecordDetail, ListClassRecord, ListGrade, ListStudent, ListStudyDocument, ListTeachingInfo, GradeDetail, UploadStudyDocument
+from .views import AllGradeStudent, ClassRecordCreate, ClassRecordDetail, ListClassRecord, ListGrade, ListStudent, ListStudyDocument, ListTeachingInfo, GradeDetail, TeacherTimetable, UploadStudyDocument
 
 urlpatterns = [
     path('me/teaching-info', ListTeachingInfo.as_view(), name='teaching_information'),
@@ -16,4 +17,6 @@ urlpatterns = [
 
     path('me/list-study-document',ListStudyDocument.as_view(), name='list_study_document'),
     path('me/upload', UploadStudyDocument.as_view(), name='upload_study_document'),
+
+    path('me/timetable', TeacherTimetable.as_view(), name='teacher_timetable'),
 ]
